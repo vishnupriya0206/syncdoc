@@ -1,0 +1,182 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1f232c;
+  --border: #2a2f3a;
+  --text: #e7e9ee;
+  --muted: #8b93a3;
+  --accent: #4c6ef5;
+  --accent-2: #2f9e44;
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-header, .editor-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+.logo-mark { color: var(--accent); margin-right: 6px; }
+
+.tagline { color: var(--muted); font-size: 13px; }
+
+.doc-list-wrap {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.new-doc-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.new-doc-form input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+}
+.new-doc-form button, .add-block-row button, .export-btn, .back-btn {
+  padding: 10px 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.back-btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); }
+.export-btn { margin-left: auto; background: var(--accent-2); }
+
+.muted { color: var(--muted); }
+
+.doc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.doc-list-item {
+  padding: 14px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.doc-list-item:hover { border-color: var(--accent); }
+.doc-list-name { font-weight: 600; }
+.doc-list-meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.status-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+}
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.status-pill[data-status="connected"] .dot { background: var(--accent-2); }
+.status-pill[data-status="disconnected"] .dot { background: #e03131; }
+
+.presence-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.presence-chip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: white;
+  opacity: 0.9;
+}
+
+.editor-main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  width: 100%;
+}
+
+.block-wrap { margin-bottom: 18px; }
+
+.editing-indicator { display: flex; gap: 6px; margin-bottom: 6px; }
+.editing-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 1px solid;
+  border-radius: 999px;
+}
+
+.block {
+  position: relative;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 14px 10px;
+}
+.block-heading textarea { font-size: 18px; font-weight: 700; }
+.block-code textarea { font-family: "JetBrains Mono", monospace; background: #0b0d12; }
+
+.block-type-tag {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--accent);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.block textarea {
+  width: 100%;
+  resize: vertical;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  padding-top: 6px;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+}
+.remove-btn:hover { color: #e03131; }
+
+.add-block-row { display: flex; gap: 8px; margin-top: 24px; }
+.add-block-row button { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); }
+.add-block-row button:hover { border-color: var(--accent); }
