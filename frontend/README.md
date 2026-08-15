@@ -1,4 +1,19 @@
-# React + Vite
+S C:\syncdoc> Test-NetConnection github.com -Port 443                                                                        
+WARNING: TCP connect to (20.207.73.82 : 443) failed                                                                           
+WARNING: Ping to 20.207.73.82 failed with status: TimedOut                                                                    
+                                                                                                                              
+                                                                                                                              
+ComputerName           : github.com                                                                                           
+RemoteAddress          : 20.207.73.82                                                                                         
+RemotePort             : 443                                                                                                  
+InterfaceAlias         : Wi-Fi                                                                                                
+SourceAddress          : 192.168.43.62                                                                                        
+PingSucceeded          : False                                                                                                
+PingReplyDetails (RTT) : 0 ms                                                                                                 
+TcpTestSucceeded       : False                                                                                                
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
