@@ -2,7 +2,16 @@ const mongoose = require('mongoose');
 
 const CollaboratorSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    // `user` is intentionally NOT required: when someone is invited by email
+    // but doesn't have a SyncDoc account yet, we still need to store the
+    // collaborator row with only `invitedEmail` set. They get linked to a
+    // real user automatically the next time they register/log in with that
+    // email (see routes/auth.js). Making this field required was the root
+    // cause of invites failing for any email that wasn't already registered:
+    // doc.save() threw a ValidationError, which (being unhandled) crashed
+    // the whole Node process and made every subsequent request in the app
+    // fail with a generic "Failed to fetch" until the server was restarted.
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     role: { type: String, enum: ['owner', 'editing', 'viewing'], default: 'editing' },
     invitedEmail: { type: String },
   },
