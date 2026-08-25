@@ -143,3 +143,74 @@ router.patch(
     res.json({ document: { id: doc._id, title: doc.title, starred: doc.starred, trashed: doc.trashed } });
   })
 );
+// DELETE /api/documents/:id (permanent)
+router.delete(
+  '/:id',
+  requireValidId,
+  asyncHandler(async (req, res) => {
+    const doc = await Document.findById(req.params.id);
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+    if (doc.owner.toString() !== req.userId) return res.status(403).json({ error: 'Only the owner can delete this document' });
+    await doc.deleteOne();
+    res.json({ ok: true });
+  })
+);
+
+// POST /api/documents/:id/invite  { email, role }
+router.post(
+  '/:id/invite',
+  requireValidId,
+  asyncHandler(async (req, res) => {
+    const { email, role } = req.body;
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ error: 'A valid email is required' });
+    }
+
+    const doc = await Document.findById(req.params.id).populate('owner', 'name email');
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+    if (!canAccess(doc, req.userId)) return res.status(403).json({ error: 'No access' });
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (doc.owner.email === normalizedEmail) {
+      return res.status(400).json({ error: 'That is already the document owner' });
+    }
+
+    // The invited person may or may not already have a SyncDoc account.
+    // Either way is fine - if they don't, we still record the invite by
+    // email and link it to their account automatically once they sign up.
+    let collaboratorUser = await User.findOne({ email: normalizedEmail });
+
+    const alreadyAdded = doc.collaborators.some(
+      (c) => (collaboratorUser && c.user?.toString() === collaboratorUser._id.toString()) || c.invitedEmail === normalizedEmail
+    );
+
+    if (!alreadyAdded) {
+      doc.collaborators.push({
+        user: collaboratorUser ? collaboratorUser._id : undefined,
+        invitedEmail: normalizedEmail,
+        role: role === 'viewing' ? 'viewing' : 'editing',
+      });
+      doc.history.push({ editedBy: req.userId, summary: `Invited ${normalizedEmail}` });
+      await doc.save();
+    }
+
+    const inviter = await User.findById(req.userId);
+    const link = `${process.env.CLIENT_URL || 'http://localhost:5173'}/editor/${doc._id}`;
+
+    // Sending the email is best-effort: if SMTP is misconfigured or the
+    // provider rejects the message, the invite itself (already saved above)
+    // should still succeed instead of surfacing a 500 to the client.
+    let emailDelivered = false;
+    try {
+      const result = await sendInviteEmail({ to: normalizedEmail, inviterName: inviter.name, documentTitle: doc.title, link });
+      emailDelivered = Boolean(result?.delivered);
+    } catch (err) {
+      console.error('Failed to send invite email:', err.message);
+    }
+
+    res.json({ ok: true, invited: normalizedEmail, emailDelivered, alreadyAdded });
+  })
+);
+
+module.exports = router;
